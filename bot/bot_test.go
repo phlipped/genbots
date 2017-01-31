@@ -1,14 +1,15 @@
-package brain
+package bot
 
 import (
   "testing"
 )
 
 func TestThink(t *testing.T) {
-
+	b := New()
+	b.Think()
 }
 
-func TestDuplicate(t *testing.T) {
+func TestCopy(t *testing.T) {
 	
 }
 
