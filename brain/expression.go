@@ -9,4 +9,6 @@ type Value float64
 // The context is passed from each Expression to any of its sub-expressions.
 type Expression interface {
 	Eval(context Context) Value
+	Copy() Expression
+	Mutate()
 }

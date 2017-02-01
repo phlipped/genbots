@@ -5,5 +5,13 @@ package brain
 type Context struct {
   Depth uint64
   Env *Environment
-  Args map[string]Value
+  Args []Value
+}
+
+func (c Context) CopyClean() Context {
+	return Context{
+		Depth: c.Depth,
+		Env: c.Env,
+		Args: make([]Value, 0),
+	}
 }
