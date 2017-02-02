@@ -9,6 +9,12 @@ type Value float64
 // The context is passed from each Expression to any of its sub-expressions.
 type Expression interface {
 	Eval(context Context) Value
-	Copy() Expression
+}
+
+// A Mutable expression can be copied and mutated
+// It still implements Expression as well
+type Mutable interface {
+	Expression
+	Copy() Mutable
 	Mutate()
 }

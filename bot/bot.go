@@ -1,18 +1,20 @@
 package bot
 
 import (
-  "github.com/phlipped/genbots/brain"
+	"github.com/phlipped/genbots/brain"
 )
 
 type Bot struct {
-  uuid uint64
-  brain brain.Expression
-  energy uint64
-  retval brain.Value // last value returned by Think()
+	uuid   uint64
+	brain  brain.Expression
+	energy uint64
+	retval brain.Value // last value returned by Think()
 }
 
-func New() Bot {
-	b := Bot{} // FIXME actually do something here
+func NewRandom() Bot {
+	b := Bot{
+		brain: brain.NewRandomExpression2(),
+	}
 	return b
 }
 
@@ -28,17 +30,17 @@ func (b *Bot) Think() {
 	// FIXME actually build an environment properly
 	env := brain.Environment{}
 
-    b.retval = b.brain.Eval(
-    	brain.Context{
-  			Env: &env,
-  			Depth: 0,
-  		},
-  	)
+	b.retval = b.brain.Eval(
+		brain.Context{
+			Env:   &env,
+			Depth: 0,
+		},
+	)
 }
 
 // Returns a copy of the original Brain
 func (b *Bot) Copy() *Bot {
-  return b
+	return b
 }
 
 // Mutates the Brain in-place
