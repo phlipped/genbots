@@ -13,7 +13,7 @@ type Bot struct {
 
 func NewRandom() Bot {
 	b := Bot{
-		brain: brain.NewRandomExpression2(),
+		brain: brain.Fibs(),
 	}
 	return b
 }

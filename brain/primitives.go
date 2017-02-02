@@ -1,13 +1,15 @@
 package brain
 
+// Constant
 type Constant struct {
 	V Value
 }
 
-func (c *Constant) Eval(ctx Context) Value {
+func (c *Constant) Eval(_ Context) Value {
 	return c.V
 }
 
+// PrimitiveFunc
 type PrimitiveFunc struct {
 	op func (...Closure) Value
 	arity uint64
@@ -21,7 +23,8 @@ func (p *PrimitiveFunc) Arity() uint64 {
 	return p.arity
 }
 
-var If = PrimitiveFunc{
+// If
+var If = &PrimitiveFunc{
 	op: func (args ...Closure) Value {
 			if args[0].Eval() > 0 {
 				return args[1].Eval()
@@ -31,9 +34,29 @@ var If = PrimitiveFunc{
 	arity: 3,
 }
 
-var Mul = PrimitiveFunc{
+// Mul
+var Mul = &PrimitiveFunc{
 	op: func (args ...Closure) Value {
 		return args[0].Eval() * args[1].Eval()
+	},
+	arity: 2,
+}
+
+// Sub
+var Sub = &PrimitiveFunc{
+	op: func (args ...Closure) Value {
+		return args[0].Eval() - args[1].Eval()
+	},
+	arity: 2,
+}
+
+// While
+var While = &PrimitiveFunc{
+	op: func (args ...Closure) (final Value) {
+		for args[0].Eval() > 0 {
+			final = args[1].Eval()
+		}
+		return final
 	},
 	arity: 2,
 }

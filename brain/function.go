@@ -14,7 +14,7 @@ func (c Closure) Eval() Value {
 
 // FuncCaller is used to call other Expressions as Functions.
 // The number of arguments in the FuncCaller must match the
-// expected number of arguments in the called expression.
+// expected number of arguments in the called Expression.
 type FuncCaller struct {
 	f Expression
 	args []Expression
@@ -23,12 +23,12 @@ type FuncCaller struct {
 func (fc *FuncCaller) Eval(ctx Context) Value {
 	newctx := ctx.CopyClean()
 	for _, a := range fc.args {
-		newctx.AddArg(Closure{Exp: a, Ctx: ctx})
+		newctx.AddArg(Closure{a, ctx})
 	}
 	return fc.f.Eval(newctx)
 }
 
-// GetArg retrieves a Closure from the 
+// GetArg retrieves a Closure from the Context
 type GetArg struct {
 	pos uint64
 }
@@ -36,3 +36,6 @@ type GetArg struct {
 func (g GetArg) Eval(ctx Context) Value {
 	return ctx.Args[g.pos].Eval()
 }
+
+// I'm toying with the idea of having a "SetArg" and/or "AppendArg" such that
+// Nodes can modify their current context
