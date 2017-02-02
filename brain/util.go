@@ -6,16 +6,12 @@ func NewRandomExpression() Expression {
 
 func NewRandomExpression2() Expression {
 
-	i := If{
-		&GetArg{0},
-		&GetArg{1},
-		&GetArg{2},
-	}
+	i := If
 
 	fc := FuncCaller{
 		f: &i,
 		args: []Expression{
-			&Constant{0},
+			&Constant{1},
 			&Constant{3},
 			&Constant{10},
 		},
