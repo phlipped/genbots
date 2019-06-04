@@ -1,49 +1,49 @@
 package bot
 
 import (
+	"context"
 	"github.com/phlipped/genbots/brain"
+	"github.com/phlipped/genbots/action"
+	"github.com/google/uuid"
 )
 
 type Bot struct {
-	uuid   uint64
-	brain  brain.Expression
-	energy uint64
-	retval brain.Value // last value returned by Think()
+	Id uuid.UUID
+	Brain brain.Actioner
+	X int32
+	Y int32
+	Energy int64
+	env *Env
 }
 
-func NewRandom() Bot {
-	b := Bot{
-		brain: brain.Fibs(),
-	}
-	return b
+func NewBot() *Bot {
+	// FIXME Generate a new brain
+	return &Bot{Id: uuid.New()}
 }
 
-// Think causes the Bot to perform one iteration of Evaluation of its Brain
-// Think will self-terminate under certain conditions, e.g.
-//   - Running out of energy
-//   - Too much recursion
-// (Although at some stage they may be given the ability to catch
-// Exceptions in their expression tree, in which case only Uncaught
-// Exceptions will cause termination)
-// It is possible that Think will never return, and yet the Bot will be healthy.
-func (b *Bot) Think() {
-	// FIXME actually build an environment properly
-	env := brain.Environment{}
-
-	b.retval = b.brain.Eval(
-		brain.Context{
-			Env:   &env,
-			Depth: 0,
-		},
-	)
-}
-
-// Returns a copy of the original Brain
 func (b *Bot) Copy() *Bot {
-	return b
+	return &Bot{
+		Id: uuid.New(),
+		Brain: b.Brain.Copy(),
+		Energy: b.Energy,
+	}
 }
 
-// Mutates the Brain in-place
 func (b *Bot) Mutate() {
+	b.Brain.Mutate()
+}
 
+func (b *Bot) Eval(ctx context.Context, actionChan chan<- *action.Action) {
+	// Following inline func runs Brain.Eval but recovers from a panic
+	// and sets the return value to an empty Action.
+	action := func() (a *action.Action) {
+		defer func() {
+			if r := recover(); r != nil {
+				a = &action.Action{}
+			}
+		}()
+		return b.Brain.Eval(ctx, b.env)
+	}()
+	action.BotId = b.Id
+	actionChan <- action
 }
